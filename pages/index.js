@@ -1,65 +1,76 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import HeaderAbout from "../components/headerAbout"
+import HeaderProfile from "../components/headerProfile"
+import Grid from "@material-ui/core/Grid"
+import UserHeader from "../components/userHeader";
+import UserInfo from "../components/userInfo"
+import UserEdit from "../components/userEdit";
+import Popup from "../components/popup"
+import { SnackbarProvider } from 'notistack';
 
-export default function Home() {
+import {StyledContainer, GridBG} from "../styled"
+
+import {Context,reducer, initialState} from "../reducer";
+import { useEffect, useReducer } from "react";
+
+export default function App(){
+
+  // С помощью хуков создаём редьюсер 
+  const [state,dispath] = useReducer(reducer,initialState);
+
+  //Если пользователь в первый раз зашел , то мы создаём фейковые данные
+  function writeFakeData(){
+    const name = "Иванова Анна Михайловна";
+    const email = "ivanova@gmail.com"
+    const phone = "880005553535";
+
+    
+  //Если данных нет, то мы записываем фековые, если же есть, то диспатчим существующие в стейт
+    if (!localStorage.getItem("name") && !localStorage.getItem("email") && !localStorage.getItem("phone")){
+      localStorage.setItem("name",name);
+      localStorage.setItem("email",email);
+      localStorage.setItem("phone",phone);
+    } else {
+      dispath({
+        type : "PRELOAD_DATA",
+        payload : {
+          name : localStorage.getItem("name",name),
+          email : localStorage.getItem("email",email),
+          phone : localStorage.getItem("phone",phone),
+        }
+      })
+    }
+  }
+
+  useEffect(() => {
+    writeFakeData();
+  },[])
+
+  const userView = state.editMode ?  <UserEdit/> :  <UserInfo/> 
+  const popup = state.confirmData ? <Popup/> : ""
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+    <Context.Provider value= {{dispath,state}}>
+      <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "center", vertical: "bottom" }}>
+      <StyledContainer>
+        <GridBG container>
+          <Grid item xs={8}>
+            <HeaderAbout/>
+          </Grid>
+          <Grid item xs={4}>
+            <HeaderProfile/>
+          </Grid>
+          <Grid item xs={12}>
+            <UserHeader/>
+            {userView}
+          </Grid>
+        </GridBG>    
+      </StyledContainer>
+      {popup}
+      </SnackbarProvider >
+    </Context.Provider>
   )
 }
+
+
+
+
