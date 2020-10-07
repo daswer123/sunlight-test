@@ -6,9 +6,14 @@ import UserEditContainer from "../../styled/userEdit";
 
 import {Context} from "../../reducer"
 import { useContext, useState, useEffect } from "react";
+import {withSnackbar,useSnackbar } from 'notistack';
 
 
 const UserEdit = () => {
+
+
+    //Snack бар для удобного уведомления пользователя.
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     function createAction(name,isInvalid){
         dispath({
@@ -17,20 +22,23 @@ const UserEdit = () => {
             isInvalid
         })
     }
+
     const {state,dispath} = useContext(Context)
-    const [name,setName] = useState("");
-    const [email,setEmail] = useState("");
-    const [phone,setPhone] = useState("");
+    const [name,setName] = useState(state.name);
+    const [email,setEmail] = useState(state.email);
+    const [phone,setPhone] = useState(state.phone);
 
-
-    useEffect(() => {
-        setEmail(localStorage.getItem("email"))
-    },[])
 
     // Определения невалидного имени через регулярные выражения
     const onNameInput = (e) => {
         let text = e.target.value
         const regExp = /([а-яА-яa-zA-z]+\s)+([а-яА-яa-zA-z]+)/ig
+
+        // Если пользователь стер данные с формы , то она не валидируется
+        if (text === ""){
+            createAction("name",false)
+            return
+        }
 
         if (text.match(regExp)){
             createAction("name",false)
@@ -46,6 +54,12 @@ const UserEdit = () => {
         let text = e.target.value
         const regExp = /^([A-Z|a-z|0-9](\.|_){0,1})+[A-Z|a-z|0-9]\@([A-Z|a-z|0-9])+((\.){0,1}[A-Z|a-z|0-9]){2}\.[a-z]{2,3}$/gm
 
+        // Если пользователь стер данные с формы , то она не валидируется
+        if (text === ""){
+            createAction("email",false)
+            return
+        }
+
         if (text.match(regExp)){
             createAction("email",false)
         } else {
@@ -58,6 +72,12 @@ const UserEdit = () => {
     const onPhoneInput = (e) => {
         let text = e.target.value
         const regExp = /^((\+7|7|8)+([0-9]){10})$|\b\d{3}[-.]?\d{3}[-.]?\d{4}/ig
+
+        // Если пользователь стер данные с формы , то она не валидируется
+        if (text === ""){
+            createAction("phone",false)
+            return
+        }
 
         if (text.match(regExp)){
             createAction("phone",false)
@@ -75,9 +95,15 @@ const UserEdit = () => {
         //Если есть невалидная форма, то пользователь не пройдет дальше
         for (let key in state.error){
             if (state.error[key] === true) {
-                alert("Пожалуйста введите данные правильно")
+                enqueueSnackbar("Пожалуйста введите данные правильно",{variant: "info"})
                 return
             }
+        }
+
+        // Если пользователь не ввел вообще никаких данных, то мы ему об этом скажем и выведем ошибку
+        if (phone === state.phone && email === state.email && name === state.name){ 
+            enqueueSnackbar("Мы не можем изменить ваш профиль на ничего, пожалуйста измените хоть что-то",{variant: "error"})
+            return
         }
 
         //Создаем временное хранилище и если пользователь отменит свои изменения, то с перезагрузкой эти данные исчезнут
@@ -102,8 +128,7 @@ const UserEdit = () => {
                 <div className="edit-data">
                     <label htmlFor="name" className="edit-input">
                         <AssignmentIndIcon className="user-icon"/>
-                        <TextField
-                             required 
+                        <TextField 
                              id="name" 
                              error = {state.error.name === true}
                              helperText={state.error.name ? state.errorText.name : ""} 
@@ -116,8 +141,7 @@ const UserEdit = () => {
                     </label>
                     <label htmlFor="email" className="edit-input">
                         <AlternateEmailIcon className="user-icon"/>
-                        <TextField 
-                            required 
+                        <TextField  
                             error = {state.error.email === true}
                             helperText={state.error.email ? state.errorText.email : ""} 
                             type="email"
@@ -126,13 +150,12 @@ const UserEdit = () => {
                             variant="outlined" 
                             label="E-mail" 
                             InputLabelProps={{shrink: true}} 
-                            placeholder={email} 
+                            placeholder={state.email} 
                             onChange={(e) => onEmailInput(e)}/>
                     </label>
                     <label htmlFor="phone" className="edit-input">
                         <PhoneIcon className="user-icon"/>
-                        <TextField 
-                            required 
+                        <TextField  
                             error = {state.error.phone === true}
                             helperText={state.error.phone ? state.errorText.phone : ""} 
                             id="phone" 
@@ -151,4 +174,4 @@ const UserEdit = () => {
     )
 }
 
-export default UserEdit
+export default withSnackbar(UserEdit)

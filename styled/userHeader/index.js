@@ -78,6 +78,7 @@ const EditLink = styled.div`
         color: white;
         height: 50px;
         margin-top: 10px;
+
     }
 
     .edit-link-icon{
@@ -94,6 +95,7 @@ const EditLink = styled.div`
         margin-right : 60px;
         margin-top: 30px;
         position: relative;
+
     }
 
     .close-link-button::before,
@@ -110,6 +112,7 @@ const EditLink = styled.div`
         top: 5px;
 
         transform: rotate(45deg);
+
     }
 
     .close-link-button::after{

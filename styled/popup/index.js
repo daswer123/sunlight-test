@@ -24,6 +24,15 @@ align-items: center;
   width: 600px;
   padding-top: 70px;
   border-radius: 10px;
+
+
+  @keyframes fadeout{
+    from {opacity : 0.2}
+    to {opacity 1}
+  }
+
+  animation-name : fadeout;
+  animation-duration: 0.4s;
 }
 
 h2{
@@ -111,6 +120,12 @@ h2{
 
 
 @media (max-width: 600px) {
+    @keyframes fromBottom{
+      from {transform: translateY(1000px)}
+      to {transform: translateY(0px)}
+    }
+
+    
     width: 100%;
     height: 100%;
     
@@ -124,6 +139,9 @@ h2{
       width: 600px;
       height: 500px;
       border-radius: 10px;
+
+      animation-name : fromBottom;
+      animation-duration: 0.6s;
     }
 
 }

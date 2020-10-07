@@ -3,6 +3,7 @@ import HeaderAbout from "../../components/headerProfile";
 
 
 const HeaderAboutBlock = styled.div`
+
     display : flex;
     position: relative;
     margin-right: 100px;

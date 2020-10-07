@@ -1,6 +1,6 @@
 import {Context} from "../../reducer"
 import {useContext, useState} from "react"
-import { withSnackbar,useSnackbar } from 'notistack';
+import {withSnackbar,useSnackbar } from 'notistack';
 import PopupContainer from "../../styled/popup"
 
 const Popup = () => {
@@ -59,7 +59,8 @@ const Popup = () => {
         })
         .catch(() => {
             enqueueSnackbar("Произошла ошибка, попробуйте снова",{variant: "error"})
-        }).finally(() => {
+        })
+        .finally(() => {
             //Убираю модальное окно, убираю режим редактирования и меняю данные с временных на постоянные
             dispath({
                 type: "SWITH_CONFIRM_DATA" 

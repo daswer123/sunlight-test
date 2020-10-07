@@ -1,10 +1,17 @@
 import styled from "styled-components";
 
 const UserInfoContainer = styled.div`
-
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
     border-radius: 10px;
     color: black;
+
+    @keyframes fadeout{
+        from {opacity : 0.2}
+        to {opacity 1}
+    }
+    
+    animation-name : fadeout;
+    animation-duration: 0.4s;
 
     margin-top: -140px;
     background-color: white;

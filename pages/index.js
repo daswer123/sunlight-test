@@ -50,7 +50,7 @@ export default function App(){
 
   return (
     <Context.Provider value= {{dispath,state}}>
-      <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "center", vertical: "bottom" }}>
+      <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "center", vertical: "bottom" }} autoHideDuration={2000}>
       <StyledContainer>
         <GridBG container>
           <Grid item xs={8}>
